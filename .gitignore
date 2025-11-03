@@ -32,3 +32,15 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment Variables ###
+.env
+.env.local
+.env.*.local
+
+### Docker ###
+docker-compose.override.yml
+
+### OS ###
+.DS_Store
+Thumbs.db

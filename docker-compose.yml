@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: securenotes-db
+    environment:
+      POSTGRES_DB: securenotes
+      POSTGRES_USER: securenotes
+      POSTGRES_PASSWORD: securenotes_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U securenotes"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - securenotes-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: securenotes-api
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/securenotes
+      SPRING_DATASOURCE_USERNAME: securenotes
+      SPRING_DATASOURCE_PASSWORD: securenotes_dev_password
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 5
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_FLYWAY_LOCATIONS: classpath:db/migration
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - securenotes-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  securenotes-network:
+    driver: bridge
