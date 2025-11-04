@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: securenotes
       POSTGRES_PASSWORD: securenotes_dev_password
     ports:
-      - "5432:5432"
+      - "15432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -30,10 +30,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/securenotes
       SPRING_DATASOURCE_USERNAME: securenotes
       SPRING_DATASOURCE_PASSWORD: securenotes_dev_password
-      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 5
-      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
-      SPRING_FLYWAY_ENABLED: "true"
-      SPRING_FLYWAY_LOCATIONS: classpath:db/migration
     ports:
       - "8080:8080"
     depends_on:

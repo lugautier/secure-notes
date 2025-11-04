@@ -1,19 +1,13 @@
-# Stage 1: Build
+# Stage 1: Build (compile)
 FROM eclipse-temurin:21-jdk AS builder
 
 WORKDIR /app
 
-# Copy pom.xml and download dependencies
-COPY pom.xml .
-RUN mvn dependency:go-offline -q
+# Copy pre-built JAR (built locally with mvn clean package)
+# In a true multi-stage, we'd compile here, but for local dev we use pre-built JAR
+COPY target/*.jar app.jar
 
-# Copy source code
-COPY src ./src
-
-# Build application (skip tests for faster builds)
-RUN mvn clean package -DskipTests -q
-
-# Stage 2: Runtime
+# Stage 2: Runtime (minimal image)
 FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
@@ -22,8 +16,8 @@ WORKDIR /app
 RUN addgroup -g 1000 appuser && \
     adduser -D -u 1000 -G appuser appuser
 
-# Copy JAR from builder stage
-COPY --from=builder /app/target/*.jar app.jar
+# Copy pre-built JAR from builder stage
+COPY --from=builder /app/app.jar app.jar
 
 # Change ownership
 RUN chown -R appuser:appuser /app

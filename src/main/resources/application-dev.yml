@@ -1,20 +1,12 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/securenotes
-    username: securenotes
-    password: securenotes_dev_password
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/securenotes}
+    username: ${SPRING_DATASOURCE_USERNAME:securenotes}
+    password: ${SPRING_DATASOURCE_PASSWORD:securenotes_dev_password}
     driver-class-name: org.postgresql.Driver
 
   jpa:
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: true
-        use_sql_comments: true
-
-  h2:
-    console:
-      enabled: false
+    enabled: false
 
 logging:
   level:
