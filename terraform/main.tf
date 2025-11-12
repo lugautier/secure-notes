@@ -66,29 +66,30 @@ module "security" {
 }
 
 # ========================================
-# Database Module
+# Database Module - DISABLED (RDS not available on free tier)
 # ========================================
-module "database" {
-  source = "./modules/database"
-
-  project_name = var.project_name
-  environment  = var.environment
-  aws_region   = var.aws_region
-
-  private_subnet_ids         = module.network.private_subnet_ids
-  database_security_group_id = module.network.database_security_group_id
-
-  db_instance_class        = var.db_instance_class
-  db_allocated_storage     = var.db_allocated_storage
-  db_engine_version        = var.db_engine_version
-  db_backup_retention_days = var.db_backup_retention_days
-  db_multi_az              = var.db_multi_az
-  db_password              = var.db_password
-
-  db_credentials_secret_arn = module.security.db_credentials_secret_arn
-
-  tags = local.common_tags
-}
+# TODO: Enable when account has RDS free tier eligibility or upgrade to paid plan
+# module "database" {
+#   source = "./modules/database"
+#
+#   project_name = var.project_name
+#   environment  = var.environment
+#   aws_region   = var.aws_region
+#
+#   private_subnet_ids         = module.network.private_subnet_ids
+#   database_security_group_id = module.network.database_security_group_id
+#
+#   db_instance_class        = var.db_instance_class
+#   db_allocated_storage     = var.db_allocated_storage
+#   db_engine_version        = var.db_engine_version
+#   db_backup_retention_days = var.db_backup_retention_days
+#   db_multi_az              = var.db_multi_az
+#   db_password              = var.db_password
+#
+#   db_credentials_secret_arn = module.security.db_credentials_secret_arn
+#
+#   tags = local.common_tags
+# }
 
 # ========================================
 # Compute Module
@@ -106,9 +107,13 @@ module "compute" {
   ecs_task_execution_role_arn = module.security.ecs_task_execution_role_arn
   ecs_task_role_arn           = module.security.ecs_task_role_arn
 
-  db_endpoint = module.database.db_endpoint
-  db_port     = module.database.db_port
-  db_name     = module.database.db_name
+  # Database endpoints disabled (RDS module disabled)
+  # db_endpoint = module.database.db_endpoint
+  # db_port     = module.database.db_port
+  # db_name     = module.database.db_name
+  db_endpoint = "localhost"  # Placeholder - update when database module enabled
+  db_port     = 5432
+  db_name     = "securenotes"
 
   container_image    = var.container_image
   container_port     = var.container_port
@@ -116,9 +121,10 @@ module "compute" {
   task_cpu           = var.task_cpu
   task_memory        = var.task_memory
 
-  db_credentials_secret_arn = module.security.db_credentials_secret_arn
+  # db_credentials_secret_arn = module.security.db_credentials_secret_arn
   jwt_secret_arn            = module.security.jwt_secret_arn
   encryption_key_arn        = module.security.encryption_key_arn
+  db_credentials_secret_arn = module.security.db_credentials_secret_arn
 
   tags = local.common_tags
 }
