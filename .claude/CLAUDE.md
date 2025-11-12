@@ -114,6 +114,15 @@ src/main/resources/
 
 ## Maven & Build
 
+### Maven Wrapper (IMPORTANT)
+- **Always use `./mvnw` instead of `mvn`** - The project includes Maven Wrapper to ensure consistent Maven version
+- **Maven version**: 3.9.11 (specified in `.mvn/wrapper/maven-wrapper.properties`)
+- **Why**: System Maven may be outdated; Maven Wrapper ensures Maven 3.9.11 + Java 21 compatibility
+- **Usage**: Replace all `mvn` commands with `./mvnw`:
+  - ✅ `./mvnw clean package -DskipTests`
+  - ✅ `./mvnw clean install`
+  - ❌ `mvn clean package` (won't work with Java 21)
+
 ### Multi-Version Java Setup
 - **Toolchains configured**: Project uses Java 21 via `maven-toolchains-plugin`
 - **Global registry**: `~/.m2/toolchains.xml` declares available JDKs
@@ -266,7 +275,7 @@ The user controls the git workflow entirely. Your role is to write code and test
 
 ### Docker Build
 ```bash
-mvn clean package -DskipTests
+./mvnw clean package -DskipTests
 docker build -t secure-notes-api:latest .
 docker run -e ENVIRONMENT=dev -e DB_URL=jdbc:postgresql://db:5432/securenotes ...
 ```
