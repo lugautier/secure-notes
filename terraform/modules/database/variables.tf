@@ -52,6 +52,12 @@ variable "db_multi_az" {
   type        = bool
 }
 
+variable "db_password" {
+  description = "RDS master user password (from Terraform Cloud, never hardcoded)"
+  type        = string
+  sensitive   = true
+}
+
 variable "db_credentials_secret_arn" {
   description = "ARN of database credentials secret (for reference)"
   type        = string

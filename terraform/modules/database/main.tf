@@ -17,7 +17,7 @@ resource "aws_db_instance" "main" {
 
   db_name  = "securenotes"
   username = "postgres"
-  password = "ChangeMe123!@#"
+  password = var.db_password
 
   allocated_storage       = var.db_allocated_storage
   storage_type            = "gp3"

@@ -1,5 +1,5 @@
 # ========================================
-# Terraform AWS Provider Configuration
+# Terraform Configuration with Cloud Backend
 # ========================================
 terraform {
   required_version = ">= 1.6.0"
@@ -8,6 +8,15 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 5.0"
+    }
+  }
+
+  cloud {
+    organization = "secure-notes"
+
+    workspaces {
+      # only dev workspace for now
+      name = "secure-notes-dev"
     }
   }
 }
@@ -36,7 +45,6 @@ module "network" {
 
   project_name = var.project_name
   environment  = var.environment
-  aws_region   = var.aws_region
 
   vpc_cidr_block         = var.vpc_cidr_block
   public_subnet_cidrs    = var.public_subnet_cidrs
@@ -54,8 +62,6 @@ module "security" {
 
   project_name = var.project_name
   environment  = var.environment
-
-  vpc_id = module.network.vpc_id
 
   tags = local.common_tags
 }
@@ -77,7 +83,8 @@ module "database" {
   db_allocated_storage    = var.db_allocated_storage
   db_engine_version       = var.db_engine_version
   db_backup_retention_days = var.db_backup_retention_days
-  db_multi_az             = var.db_multi_az
+  db_multi_az              = var.db_multi_az
+  db_password              = var.db_password
 
   db_credentials_secret_arn = module.security.db_credentials_secret_arn
 

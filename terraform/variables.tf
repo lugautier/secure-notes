@@ -1,7 +1,18 @@
 # ========================================
 # Global Input Variables
 # ========================================
-
+#
+# Variable Sources:
+#   📄 Git (terraform/environments/dev/terraform.tfvars):
+#      - Non-sensitive infrastructure parameters
+#      - Examples: db_instance_class, aws_region, environment, etc.
+#      - Version controlled for auditability
+#
+#   🔒 Terraform Cloud (workspace variables):
+#      - Sensitive values (passwords, API keys, private keys)
+#      - Examples: db_password, jwt_private_key, encryption_key
+#      - NEVER stored in git
+#
 # ========================================
 # AWS Configuration
 # ========================================
@@ -199,5 +210,22 @@ variable "owner_email" {
   validation {
     condition     = can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", var.owner_email))
     error_message = "Owner email must be a valid email address"
+  }
+}
+
+# ========================================
+# 🔒 SENSITIVE VARIABLES (Terraform Cloud Only)
+# ========================================
+# These are stored in Terraform Cloud workspace variables with "Sensitive" checkbox
+# They are NEVER stored in git or terraform.tfvars
+
+variable "db_password" {
+  description = "RDS PostgreSQL master user password"
+  type        = string
+  sensitive   = true
+
+  validation {
+    condition     = length(var.db_password) >= 12
+    error_message = "Database password must be at least 12 characters"
   }
 }
