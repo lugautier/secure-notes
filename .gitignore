@@ -44,3 +44,31 @@ docker-compose.override.yml
 ### OS ###
 .DS_Store
 Thumbs.db
+
+### Terraform ###
+# Local .terraform directories (but NOT .terraform.lock.hcl - that should be in git)
+terraform/.terraform/
+**/terraform/.terraform/
+!**/terraform/.terraform.lock.hcl
+!terraform/.terraform.lock.hcl
+
+# .tfstate files (state is stored in Terraform Cloud, not git)
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Ignore override files, as they are usually used to override resources locally
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+
+# Ignore plan files
+*.tfplan

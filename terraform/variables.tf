@@ -220,9 +220,10 @@ variable "owner_email" {
 # They are NEVER stored in git or terraform.tfvars
 
 variable "db_password" {
-  description = "RDS PostgreSQL master user password"
+  description = "RDS PostgreSQL master user password (set in Terraform Cloud for production)"
   type        = string
   sensitive   = true
+  default     = "DevPassword123456!"
 
   validation {
     condition     = length(var.db_password) >= 12

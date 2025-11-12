@@ -1,6 +1,8 @@
 # ========================================
 # Development Environment Configuration
 # ========================================
+# Auto-loaded by Terraform (*.auto.tfvars pattern)
+# Non-sensitive variables only - sensitive values in Terraform Cloud
 
 # Project
 project_name = "secure-notes"
