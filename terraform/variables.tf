@@ -116,13 +116,13 @@ variable "db_allocated_storage" {
 }
 
 variable "db_engine_version" {
-  description = "PostgreSQL version (e.g., 16.1, 15.5)"
+  description = "PostgreSQL version (15.x for free tier, 16.x requires paid plan)"
   type        = string
-  default     = "16.1"
+  default     = "15.5"
 
   validation {
-    condition     = can(regex("^(14|15|16)\\.[0-9]+$", var.db_engine_version))
-    error_message = "PostgreSQL version must be 14.x, 15.x, or 16.x"
+    condition     = can(regex("^(14|15)\\.[0-9]+$", var.db_engine_version))
+    error_message = "PostgreSQL version must be 14.x or 15.x (free tier compatible)"
   }
 }
 

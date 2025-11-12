@@ -21,7 +21,7 @@ availability_zones   = ["eu-west-1a", "eu-west-1b"]
 # Database (dev: minimal, cost-optimized, free tier compatible)
 db_instance_class       = "db.t2.micro"  # Free tier eligible instance type
 db_allocated_storage    = 20
-db_engine_version       = "16.1"
+db_engine_version       = "15.5"         # PostgreSQL 15 supported on free tier (16 not supported)
 db_backup_retention_days = 1  # Free tier limit (1 day max)
 db_multi_az             = false
 
