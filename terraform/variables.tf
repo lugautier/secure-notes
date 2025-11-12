@@ -96,12 +96,12 @@ variable "availability_zones" {
 # ========================================
 
 variable "db_instance_class" {
-  description = "RDS instance type (t3.micro = free tier eligible, t3.small = prod)"
+  description = "RDS instance type (db.t2.micro = free tier, db.t3.small/medium = prod)"
   type        = string
 
   validation {
-    condition     = can(regex("^t3\\.(micro|small|medium)$", var.db_instance_class))
-    error_message = "Instance class must be t3.micro, t3.small, or t3.medium"
+    condition     = can(regex("^db\\.(t2\\.micro|t3\\.(small|medium))$", var.db_instance_class))
+    error_message = "Instance class must be db.t2.micro (free tier) or db.t3.small/medium (production)"
   }
 }
 
