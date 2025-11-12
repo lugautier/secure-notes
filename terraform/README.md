@@ -141,6 +141,34 @@ Infrastructure deployed
 
 ---
 
+## Important: RDS Database Disabled
+
+**Status**: The RDS PostgreSQL database module is currently **disabled** in this deployment.
+
+**Why**: AWS free tier is not available for RDS on this account. The module was disabled to allow the rest of the infrastructure (VPC, ECS, Security Groups, IAM) to deploy successfully.
+
+**How it's disabled**:
+- The `module "database"` block in `main.tf` is commented out
+- Database references in the compute module use placeholder values:
+  ```hcl
+  db_endpoint = "localhost"  # Placeholder
+  db_port     = 5432
+  db_name     = "securenotes"
+  ```
+
+**To re-enable RDS later**:
+1. Uncomment the `module "database"` block in `main.tf`
+2. Update the compute module to use `module.database.db_endpoint` instead of placeholder
+3. Ensure your AWS account has RDS free tier eligibility OR upgrade to a paid plan
+4. Run `terraform plan` and `terraform apply`
+
+**Alternative solutions**:
+- Use a different AWS account with free tier RDS eligibility
+- Upgrade to AWS paid plan
+- Use alternative database (DynamoDB, managed PostgreSQL outside free tier, etc.)
+
+---
+
 ## Environments
 
 ### Variable Strategy (Hybrid Approach)
