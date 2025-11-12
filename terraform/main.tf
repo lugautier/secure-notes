@@ -46,10 +46,10 @@ module "network" {
   project_name = var.project_name
   environment  = var.environment
 
-  vpc_cidr_block         = var.vpc_cidr_block
-  public_subnet_cidrs    = var.public_subnet_cidrs
-  private_subnet_cidrs   = var.private_subnet_cidrs
-  availability_zones     = var.availability_zones
+  vpc_cidr_block       = var.vpc_cidr_block
+  public_subnet_cidrs  = var.public_subnet_cidrs
+  private_subnet_cidrs = var.private_subnet_cidrs
+  availability_zones   = var.availability_zones
 
   tags = local.common_tags
 }
@@ -76,12 +76,12 @@ module "database" {
   environment  = var.environment
   aws_region   = var.aws_region
 
-  private_subnet_ids             = module.network.private_subnet_ids
-  database_security_group_id     = module.network.database_security_group_id
+  private_subnet_ids         = module.network.private_subnet_ids
+  database_security_group_id = module.network.database_security_group_id
 
-  db_instance_class       = var.db_instance_class
-  db_allocated_storage    = var.db_allocated_storage
-  db_engine_version       = var.db_engine_version
+  db_instance_class        = var.db_instance_class
+  db_allocated_storage     = var.db_allocated_storage
+  db_engine_version        = var.db_engine_version
   db_backup_retention_days = var.db_backup_retention_days
   db_multi_az              = var.db_multi_az
   db_password              = var.db_password
@@ -101,8 +101,8 @@ module "compute" {
   environment  = var.environment
   aws_region   = var.aws_region
 
-  private_subnet_ids                = module.network.private_subnet_ids
-  app_security_group_id             = module.network.app_security_group_id
+  private_subnet_ids    = module.network.private_subnet_ids
+  app_security_group_id = module.network.app_security_group_id
 
   ecs_task_execution_role_arn = module.security.ecs_task_execution_role_arn
   ecs_task_role_arn           = module.security.ecs_task_role_arn
@@ -111,11 +111,11 @@ module "compute" {
   db_port     = module.database.db_port
   db_name     = module.database.db_name
 
-  container_image      = var.container_image
-  container_port       = var.container_port
-  desired_task_count   = var.desired_task_count
-  task_cpu             = var.task_cpu
-  task_memory          = var.task_memory
+  container_image    = var.container_image
+  container_port     = var.container_port
+  desired_task_count = var.desired_task_count
+  task_cpu           = var.task_cpu
+  task_memory        = var.task_memory
 
   db_credentials_secret_arn = module.security.db_credentials_secret_arn
   jwt_secret_arn            = module.security.jwt_secret_arn
