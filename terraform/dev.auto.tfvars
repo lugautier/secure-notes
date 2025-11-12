@@ -18,11 +18,11 @@ public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
 private_subnet_cidrs = ["10.0.10.0/24", "10.0.11.0/24"]
 availability_zones   = ["eu-west-1a", "eu-west-1b"]
 
-# Database (dev: minimal, cost-optimized)
+# Database (dev: minimal, cost-optimized, free tier compatible)
 db_instance_class       = "t3.micro"
 db_allocated_storage    = 20
 db_engine_version       = "16.1"
-db_backup_retention_days = 7
+db_backup_retention_days = 1  # Free tier limit (1 day max)
 db_multi_az             = false
 
 # Compute (dev: single container instance)
