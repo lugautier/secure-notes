@@ -1,12 +1,8 @@
 # ========================================
 # Terraform Remote State Configuration
 # ========================================
-terraform {
-  backend "s3" {
-    bucket = "secure-notes-terraform-state-093229128057"
-    key = "dev/terraform.tfstate"
-    region = "eu-west-1"
-    dynamodb_table = "secure-notes-terraform-locks"
-    encrypt = true
-  }
-}
+# Backend is configured per environment in:
+# - environments/dev/main.tf
+# - environments/prod/main.tf
+#
+# See SETUP.md for detailed instructions on setting up S3 backend
