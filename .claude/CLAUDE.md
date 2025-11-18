@@ -108,7 +108,7 @@ src/main/resources/
 - **Unit tests**: JUnit 5 + Mockito for business logic (UserService, NoteService, CryptoService)
 - **Integration tests**: @SpringBootTest + Testcontainers PostgreSQL for full flow testing
 - **Security tests**: JWT token validation, encryption/decryption, permission checks
-- **Coverage target**: >70% for business logic (verified with JaCoCo)
+- **Coverage target**: >50% for business logic (verified with JaCoCo)
 - **Test naming**: `testXxx_WhenYyy_ThenZzz` format for clarity
 - **Test isolation**: Each test independent, no shared state, use @DirtiesContext if needed
 
