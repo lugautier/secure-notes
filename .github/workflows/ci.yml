@@ -73,12 +73,22 @@ jobs:
             exit 0
           fi
 
-          # Extract coverage percentage from jacoco.xml
-          COVERAGE=$(grep -oP 'line-rate="\K[^"]+' target/site/jacoco/jacoco.xml | head -1)
-          COVERAGE_PERCENT=$(echo "scale=2; $COVERAGE * 100" | bc)
-          echo "Code Coverage: ${COVERAGE_PERCENT}%"
+          # Extract LINE coverage from jacoco.xml (last counter element has total)
+          MISSED=$(grep -o 'type="LINE" missed="[^"]*"' target/site/jacoco/jacoco.xml | tail -1 | grep -o '[0-9]*')
+          COVERED=$(grep -o 'type="LINE" missed="[^"]*" covered="[^"]*"' target/site/jacoco/jacoco.xml | tail -1 | grep -o 'covered="[^"]*"' | grep -o '[0-9]*')
 
-          if (( $(echo "$COVERAGE < 0.50" | bc -l) )); then
+          if [ -z "$MISSED" ] || [ -z "$COVERED" ]; then
+            echo "⚠️  Could not extract coverage from jacoco.xml"
+            exit 0
+          fi
+
+          # Calculate coverage percentage (covered / (covered + missed))
+          TOTAL=$((COVERED + MISSED))
+          COVERAGE_PERCENT=$(awk "BEGIN {printf \"%.2f\", ($COVERED / $TOTAL) * 100}")
+          echo "Code Coverage: ${COVERAGE_PERCENT}% ($COVERED/$TOTAL lines)"
+
+          # Check if coverage meets 50% threshold
+          if awk "BEGIN {exit !($COVERAGE_PERCENT < 50)}"; then
             echo "❌ Coverage below 50%: ${COVERAGE_PERCENT}%"
             exit 1
           fi
