@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Pre-commit hook: Format code and run build before allowing commit
+# This ensures all commits have correct formatting
+# Installed automatically by maven-git-hooks-plugin
+
+echo "🔍 Running Spotless formatter and build..."
+
+# Run Maven build with Spotless auto-format
+./mvnw clean compile -DskipTests
+
+BUILD_EXIT_CODE=$?
+
+git add --update
+
+if [ $BUILD_EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ BUILD FAILED"
+    echo ""
+    echo "ℹ️  Spotless has auto-formatted your code"
+    echo "ℹ️  Formatted files are staged"
+    echo ""
+    exit 1
+fi
+
+echo ""
+echo "✅ BUILD PASSED"
+echo "✅ Code is properly formatted"
+echo "✅ Formatted files updated in staging area"
+echo "✅ Proceeding with commit..."
+echo ""
+
+exit 0
