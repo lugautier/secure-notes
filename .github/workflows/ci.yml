@@ -214,7 +214,7 @@ jobs:
           severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy report to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
@@ -237,7 +237,7 @@ jobs:
           severity: 'CRITICAL,HIGH,MEDIUM'
 
       - name: Upload Trivy IaC report to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: 'trivy-iac-results.sarif'
@@ -270,7 +270,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload TFSec report to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: 'tfsec-results.sarif'
