@@ -18,6 +18,8 @@ public class JwtProvider {
   private final JwtConfig jwtConfig;
 
   public String generateToken(UUID userId, String email) {
+    // Current: Single 24h access token (defined in application.yml)
+    // TODO: Replace with 15min access token + 7day refresh token pattern + proper logout
     Instant issuedAt = Instant.now();
     Instant expiresAt = issuedAt.plusSeconds(jwtConfig.getExpiration());
 
