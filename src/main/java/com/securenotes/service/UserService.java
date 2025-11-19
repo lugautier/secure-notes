@@ -8,6 +8,9 @@ import com.securenotes.repository.UserRoleRepository;
 import com.securenotes.security.JwtProvider;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -60,6 +63,18 @@ public class UserService {
     String token = jwtProvider.generateToken(user.getId(), user.getEmail());
     log.info("User authenticated successfully: {}", email);
     return token;
+  }
+
+  public User getUserProfile(UUID userId) {
+    return userRepository
+        .findById(userId)
+        .orElseThrow(() -> new IllegalArgumentException("User not found"));
+  }
+
+  public Set<String> getUserRoles(UUID userId) {
+    return userRoleRepository.findByUserId(userId).stream()
+        .map(userRole -> userRole.getRole().toString())
+        .collect(Collectors.toSet());
   }
 
   private String generateSalt() {

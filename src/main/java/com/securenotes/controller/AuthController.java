@@ -4,14 +4,20 @@ import com.securenotes.config.JwtConfig;
 import com.securenotes.domain.User;
 import com.securenotes.dto.LoginRequest;
 import com.securenotes.dto.LoginResponse;
+import com.securenotes.dto.ProfileResponse;
 import com.securenotes.dto.RegisterRequest;
 import com.securenotes.dto.RegisterResponse;
 import com.securenotes.service.UserService;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +50,24 @@ public class AuthController {
     LoginResponse response = new LoginResponse(token, jwtConfig.getExpiration());
 
     log.info("Login successful for email: {}", request.email());
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/profile")
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<ProfileResponse> getProfile() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String userId = (String) authentication.getPrincipal();
+    UUID userUuid = UUID.fromString(userId);
+
+    User user = userService.getUserProfile(userUuid);
+    var roles = userService.getUserRoles(userUuid);
+
+    ProfileResponse response =
+        new ProfileResponse(
+            user.getId(), user.getEmail(), roles, user.getCreatedAt(), user.getUpdatedAt());
+
+    log.info("Profile retrieved for user: {}", user.getEmail());
     return ResponseEntity.ok(response);
   }
 }
