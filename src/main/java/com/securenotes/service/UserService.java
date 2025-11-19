@@ -5,6 +5,7 @@ import com.securenotes.domain.User;
 import com.securenotes.domain.UserRole;
 import com.securenotes.repository.UserRepository;
 import com.securenotes.repository.UserRoleRepository;
+import com.securenotes.security.JwtProvider;
 import java.security.SecureRandom;
 import java.util.Base64;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final UserRoleRepository userRoleRepository;
   private final PasswordEncoder passwordEncoder;
+  private final JwtProvider jwtProvider;
 
   @Transactional
   public User registerUser(String email, String password) {
@@ -43,6 +45,21 @@ public class UserService {
 
     log.info("User registered successfully: {}", email);
     return user;
+  }
+
+  public String generateLoginToken(String email, String password) {
+    User user =
+        userRepository
+            .findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+
+    if (!passwordEncoder.matches(password + user.getSalt(), user.getPasswordHash())) {
+      throw new IllegalArgumentException("Invalid email or password");
+    }
+
+    String token = jwtProvider.generateToken(user.getId(), user.getEmail());
+    log.info("User authenticated successfully: {}", email);
+    return token;
   }
 
   private String generateSalt() {

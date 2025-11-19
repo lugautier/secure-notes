@@ -1,6 +1,9 @@
 package com.securenotes.controller;
 
+import com.securenotes.config.JwtConfig;
 import com.securenotes.domain.User;
+import com.securenotes.dto.LoginRequest;
+import com.securenotes.dto.LoginResponse;
 import com.securenotes.dto.RegisterRequest;
 import com.securenotes.dto.RegisterResponse;
 import com.securenotes.service.UserService;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
   private final UserService userService;
+  private final JwtConfig jwtConfig;
 
   @PostMapping("/register")
   public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
@@ -31,5 +35,15 @@ public class AuthController {
 
     log.info("Registration successful for email: {}", request.email());
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
+
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    String token = userService.generateLoginToken(request.email(), request.password());
+
+    LoginResponse response = new LoginResponse(token, jwtConfig.getExpiration());
+
+    log.info("Login successful for email: {}", request.email());
+    return ResponseEntity.ok(response);
   }
 }
