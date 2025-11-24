@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
@@ -45,12 +45,17 @@ public class AuthController {
 
   @PostMapping("/login")
   public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-    String token = userService.generateLoginToken(request.email(), request.password());
+    try {
+      String token = userService.generateLoginToken(request.email(), request.password());
 
-    LoginResponse response = new LoginResponse(token, jwtConfig.getExpiration());
+      LoginResponse response = new LoginResponse(token, jwtConfig.getExpiration());
 
-    log.info("Login successful for email: {}", request.email());
-    return ResponseEntity.ok(response);
+      log.info("Login successful for email: {}", request.email());
+      return ResponseEntity.ok(response);
+    } catch (IllegalArgumentException e) {
+      log.warn("Login failed for email: {} - {}", request.email(), e.getMessage());
+      return ResponseEntity.badRequest().build();
+    }
   }
 
   @GetMapping("/profile")

@@ -37,9 +37,20 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .exceptionHandling(
+            exception ->
+                exception.authenticationEntryPoint(
+                    (request, response, e) -> {
+                      response.setStatus(401);
+                      response.setContentType("application/json");
+                      response
+                          .getWriter()
+                          .write(
+                              "{\"error\": \"Unauthorized\", \"message\": \"Authentication required\"}");
+                    }))
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers("/api/auth/register", "/api/auth/login")
+                auth.requestMatchers("/auth/register", "/auth/login", "/error")
                     .permitAll()
                     .requestMatchers(
                         "/actuator/health", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**")
