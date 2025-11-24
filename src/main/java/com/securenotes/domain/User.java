@@ -8,6 +8,7 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -40,6 +41,7 @@ public class User {
   private LocalDateTime updatedAt = LocalDateTime.now();
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @EqualsAndHashCode.Exclude
   @Builder.Default
   private Set<UserRole> userRoles = new HashSet<>();
 }
