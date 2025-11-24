@@ -19,6 +19,11 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+/**
+ * Spring Security configuration for stateless JWT authentication. Disables sessions (stateless with
+ * JWT), enables CORS, and defines public/protected endpoints. JWT tokens validated per-request via
+ * JwtAuthenticationFilter.
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -26,11 +31,30 @@ public class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+  /**
+   * Configures BCrypt password encoder with default strength (10 rounds). Passwords are salted
+   * during registration for additional security.
+   *
+   * @return BCrypt password encoder
+   */
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 
+  /**
+   * Configures Spring Security filter chain for JWT-based stateless authentication. - CORS: Allows
+   * requests from localhost:3000/4200 - CSRF: Disabled (stateless JWT, no session cookies) -
+   * Sessions: STATELESS (no server-side session storage) - Public endpoints: /auth/register,
+   * /auth/login, /actuator/health, /swagger-ui.html, /v3/api-docs - Protected endpoints: All other
+   * endpoints require JWT Bearer token - JWT Filter: Validates token before
+   * UsernamePasswordAuthenticationFilter - Security headers: X-Frame-Options: DENY (prevents
+   * clickjacking)
+   *
+   * @param http HttpSecurity builder
+   * @return configured SecurityFilterChain
+   * @throws Exception if configuration fails
+   */
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -63,6 +87,12 @@ public class SecurityConfig {
     return http.build();
   }
 
+  /**
+   * Configures CORS (Cross-Origin Resource Sharing) for frontend integration. Allows requests from
+   * localhost development servers with credentials (JWT tokens).
+   *
+   * @return CORS configuration source
+   */
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();

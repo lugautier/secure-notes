@@ -11,6 +11,11 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * JWT configuration for RS256 (asymmetric) token signing. Loads RSA private/public keys from
+ * environment variables in PEM format. Private key signs tokens (server-only), public key verifies
+ * tokens (can be shared).
+ */
 @Configuration
 @Getter
 @Slf4j
@@ -25,6 +30,14 @@ public class JwtConfig {
   @Value("${jwt.expiration}")
   private long expiration;
 
+  /**
+   * Parses and returns the RSA private key from PEM-formatted configuration. Used exclusively for
+   * signing JWT tokens during authentication.
+   *
+   * @return RSA private key
+   * @throws IllegalArgumentException if key is not configured
+   * @throws RuntimeException if PEM parsing fails
+   */
   public PrivateKey getPrivateKey() {
     try {
       if (privateKeyString == null || privateKeyString.isEmpty()) {
@@ -42,6 +55,14 @@ public class JwtConfig {
     }
   }
 
+  /**
+   * Parses and returns the RSA public key from PEM-formatted configuration. Used for verifying JWT
+   * token signatures during authentication. Safe to share with clients
+   *
+   * @return RSA public key
+   * @throws IllegalArgumentException if key is not configured
+   * @throws RuntimeException if PEM parsing fails
+   */
   public PublicKey getPublicKey() {
     try {
       if (publicKeyString == null || publicKeyString.isEmpty()) {
