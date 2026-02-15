@@ -17,24 +17,31 @@ import com.securenotes.security.JwtProvider;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-  @Autowired private UserService userService;
+  private UserService userService;
 
-  @Autowired private PasswordEncoder passwordEncoder;
+  private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-  @MockitoBean private UserRepository userRepository;
+  @Mock private UserRepository userRepository;
 
-  @MockitoBean private UserRoleRepository userRoleRepository;
+  @Mock private UserRoleRepository userRoleRepository;
 
-  @MockitoBean private JwtProvider jwtProvider;
+  @Mock private JwtProvider jwtProvider;
+
+  @BeforeEach
+  void setUp() {
+    userService = new UserService(userRepository, userRoleRepository, passwordEncoder, jwtProvider);
+  }
 
   @Test
   void testRegisterUser_ValidRequest_HashesPasswordWithSalt() {

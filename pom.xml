@@ -31,6 +31,7 @@
 		<jjwt.version>0.12.5</jjwt.version>
 		<springdoc-openapi.version>2.6.0</springdoc-openapi.version>
 		<bouncycastle.version>1.78.1</bouncycastle.version>
+		<testcontainers.version>1.21.4</testcontainers.version>
 	</properties>
 	<dependencies>
 		<dependency>
