@@ -2,14 +2,9 @@ spring:
   application:
     name: secure-notes-api
 
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-
   flyway:
     enabled: false
+    locations: classpath:db/migration
 
   datasource:
     hikari:
