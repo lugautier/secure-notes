@@ -82,7 +82,16 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-        .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::deny));
+        .headers(
+            headers ->
+                headers
+                    .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
+                    .httpStrictTransportSecurity(
+                        hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
+                    .contentTypeOptions(contentType -> {})
+                    .cacheControl(cache -> {})
+                    .contentSecurityPolicy(
+                        csp -> csp.policyDirectives("default-src 'self'; frame-ancestors 'none'")));
 
     return http.build();
   }
