@@ -172,7 +172,7 @@ class AuthIntegrationTest {
         restTemplate.postForEntity("/auth/login", loginRequest, LoginResponse.class);
 
     // Verify login failed
-    assertThat(loginResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(loginResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 
   @Test

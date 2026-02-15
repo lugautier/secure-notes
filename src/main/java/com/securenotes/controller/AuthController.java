@@ -45,17 +45,12 @@ public class AuthController {
 
   @PostMapping("/login")
   public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-    try {
-      String token = userService.generateLoginToken(request.email(), request.password());
+    String token = userService.generateLoginToken(request.email(), request.password());
 
-      LoginResponse response = new LoginResponse(token, jwtConfig.getExpiration());
+    LoginResponse response = new LoginResponse(token, jwtConfig.getExpiration());
 
-      log.info("Login successful for email: {}", request.email());
-      return ResponseEntity.ok(response);
-    } catch (IllegalArgumentException e) {
-      log.warn("Login failed for email: {} - {}", request.email(), e.getMessage());
-      return ResponseEntity.badRequest().build();
-    }
+    log.info("Login successful for email: {}", request.email());
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping("/profile")
