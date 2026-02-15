@@ -11,6 +11,9 @@ import static org.mockito.Mockito.when;
 import com.securenotes.domain.Role;
 import com.securenotes.domain.User;
 import com.securenotes.domain.UserRole;
+import com.securenotes.exception.AuthenticationException;
+import com.securenotes.exception.EmailAlreadyExistsException;
+import com.securenotes.exception.ResourceNotFoundException;
 import com.securenotes.repository.UserRepository;
 import com.securenotes.repository.UserRoleRepository;
 import com.securenotes.security.JwtProvider;
@@ -83,8 +86,8 @@ class UserServiceTest {
     when(userRepository.findByEmail(email)).thenReturn(Optional.of(existingUser));
 
     assertThatThrownBy(() -> userService.registerUser(email, password))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Email already registered");
+        .isInstanceOf(EmailAlreadyExistsException.class)
+        .hasMessageContaining(email);
 
     // Verify save was NEVER called (exception thrown before saving)
     verify(userRepository, never()).save(any());
@@ -155,7 +158,7 @@ class UserServiceTest {
     when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
 
     assertThatThrownBy(() -> userService.generateLoginToken(email, wrongPassword))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(AuthenticationException.class)
         .hasMessage("Invalid email or password");
 
     // Verify token generation was NEVER called (exception thrown before generating token)
@@ -170,7 +173,7 @@ class UserServiceTest {
     when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> userService.generateLoginToken(email, password))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(AuthenticationException.class)
         .hasMessage("Invalid email or password");
 
     // Verify token generation was NEVER called
@@ -203,8 +206,8 @@ class UserServiceTest {
     when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> userService.getUserProfile(userId))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("User not found");
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessageContaining("User");
   }
 
   @Test

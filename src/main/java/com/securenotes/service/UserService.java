@@ -3,6 +3,9 @@ package com.securenotes.service;
 import com.securenotes.domain.Role;
 import com.securenotes.domain.User;
 import com.securenotes.domain.UserRole;
+import com.securenotes.exception.AuthenticationException;
+import com.securenotes.exception.EmailAlreadyExistsException;
+import com.securenotes.exception.ResourceNotFoundException;
 import com.securenotes.repository.UserRepository;
 import com.securenotes.repository.UserRoleRepository;
 import com.securenotes.security.JwtProvider;
@@ -41,12 +44,12 @@ public class UserService {
    * @param email user's email (must be unique)
    * @param password plaintext password (hashed before storage)
    * @return created User entity
-   * @throws IllegalArgumentException if email already registered
+   * @throws EmailAlreadyExistsException if email already registered
    */
   @Transactional
   public User registerUser(String email, String password) {
     if (userRepository.findByEmail(email).isPresent()) {
-      throw new IllegalArgumentException("Email already registered");
+      throw new EmailAlreadyExistsException(email);
     }
 
     String salt = generateSalt();
@@ -72,16 +75,16 @@ public class UserService {
    * @param email user's email address
    * @param password plaintext password (checked against hash)
    * @return JWT token for authenticated user
-   * @throws IllegalArgumentException if email not found or password incorrect
+   * @throws AuthenticationException if email not found or password incorrect
    */
   public String generateLoginToken(String email, String password) {
     User user =
         userRepository
             .findByEmail(email)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+            .orElseThrow(() -> new AuthenticationException("Invalid email or password"));
 
     if (!passwordEncoder.matches(password + user.getSalt(), user.getPasswordHash())) {
-      throw new IllegalArgumentException("Invalid email or password");
+      throw new AuthenticationException("Invalid email or password");
     }
 
     String token = jwtProvider.generateToken(user.getId(), user.getEmail());
@@ -92,7 +95,7 @@ public class UserService {
   public User getUserProfile(UUID userId) {
     return userRepository
         .findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        .orElseThrow(() -> new ResourceNotFoundException("User", userId.toString()));
   }
 
   public Set<String> getUserRoles(UUID userId) {
