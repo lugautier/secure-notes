@@ -1,12 +1,21 @@
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/securenotes}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:15432/securenotes}
     username: ${SPRING_DATASOURCE_USERNAME:securenotes}
     password: ${SPRING_DATASOURCE_PASSWORD:securenotes_dev_password}
     driver-class-name: org.postgresql.Driver
 
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
   jpa:
-    enabled: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
 
 logging:
   level:
@@ -18,12 +27,10 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql: TRACE
 
-# Dev credentials (for local testing only, never use in production)
 jwt:
-  private-key: ${JWT_PRIVATE_KEY:MIIEowIBAAKCAQEA0Z3VS5JJcds...dummy...}
-  public-key: ${JWT_PUBLIC_KEY:MIIBIjANBgkqhkiG9w0BAQE...dummy...}
+  private-key: ${JWT_PRIVATE_KEY:}
+  public-key: ${JWT_PUBLIC_KEY:}
   expiration: 86400
 
-# Server config
 server:
   port: 8080
